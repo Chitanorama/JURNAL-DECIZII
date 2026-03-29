@@ -23,6 +23,36 @@ function compressImage(dataUrl, maxSize=1000, quality=0.75) {
   });
 }
 
+
+const BUCKET = 'Jurnal de decizii';
+
+async function uploadFile(file, folder='uploads') {
+  const ext = file.name.split('.').pop();
+  const fileName = folder+'/'+Date.now()+'-'+Math.random().toString(36).slice(2)+'.'+ext;
+  const res = await fetch(
+    SUPABASE_URL+'/storage/v1/object/'+BUCKET+'/'+fileName,
+    {
+      method:'POST',
+      headers:{
+        'apikey':SUPABASE_KEY,
+        'Authorization':'Bearer '+SUPABASE_KEY,
+        'Content-Type':file.type||'application/octet-stream',
+        'x-upsert':'true'
+      },
+      body:file
+    }
+  );
+  if(!res.ok){const e=await res.text();throw new Error('Upload error: '+e);}
+  return SUPABASE_URL+'/storage/v1/object/public/'+BUCKET+'/'+fileName;
+}
+
+async function uploadDataUrl(dataUrl, ext='jpg', folder='images') {
+  const res = await fetch(dataUrl);
+  const blob = await res.blob();
+  const file = new File([blob], Date.now()+'.'+ext, {type:blob.type});
+  return uploadFile(file, folder);
+}
+
 const SUPABASE_URL = "https://aphldgxfusyccyidzvze.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFwaGxkZ3hmdXN5Y2N5aWR6dnplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3MjMzMTAsImV4cCI6MjA5MDI5OTMxMH0.7wv92ujW6N-61R58bwC9zRbN3AmDgXNhgOxj8JyJSJM";
 
@@ -133,7 +163,7 @@ function LinksList({links,onChange}){
 
 function AttachList({attachments,onChange}){
   const fmtSize=s=>s>1048576?(s/1048576).toFixed(1)+"MB":(s/1024).toFixed(0)+"KB";
-  const handleFile=e=>{Array.from(e.target.files||[]).forEach(file=>{const r=new FileReader();r.onload=ev=>{if(file.type.startsWith("image/")){compressImage(ev.target.result).then(compressed=>onChange([...(attachments||[]),{name:file.name,size:file.size,data:compressed}]));}else{onChange([...(attachments||[]),{name:file.name,size:file.size,data:ev.target.result}]);}};r.readAsDataURL(file);});e.target.value="";};
+  const handleFile=e=>{Array.from(e.target.files||[]).forEach(file=>{uploadFile(file,'attachments').then(url=>onChange([...(attachments||[]),{name:file.name,size:file.size,data:url,isUrl:true}])).catch(err=>{console.error('Upload failed',err);const r=new FileReader();r.onload=ev=>onChange([...(attachments||[]),{name:file.name,size:file.size,data:ev.target.result}]);r.readAsDataURL(file);});});e.target.value="";};
   const at=attachments||[];
   return(<div style={{marginBottom:12}}>
     <label style={{display:"block",fontSize:12,color:"#888",marginBottom:6,fontWeight:500}}>Atasamente</label>
@@ -150,7 +180,7 @@ function AttachList({attachments,onChange}){
 
 function ImgPaste({images,onChange,locked}){
   const imgs=images||[];
-  const handlePaste=e=>{if(locked)return;const items=e.clipboardData&&e.clipboardData.items;if(!items)return;for(let i=0;i<items.length;i++){if(items[i].type.startsWith("image/")){const r=new FileReader();r.onload=ev=>compressImage(ev.target.result).then(compressed=>onChange([...imgs,compressed]));r.readAsDataURL(items[i].getAsFile());}}};
+  const handlePaste=e=>{if(locked)return;const items=e.clipboardData&&e.clipboardData.items;if(!items)return;for(let i=0;i<items.length;i++){if(items[i].type.startsWith("image/")){const r=new FileReader();r.onload=ev=>compressImage(ev.target.result).then(compressed=>uploadDataUrl(compressed,'jpg','images').then(url=>onChange([...imgs,url])).catch(()=>onChange([...imgs,compressed])));r.readAsDataURL(items[i].getAsFile());}}};
   return(<div style={{marginBottom:12}}>
     <div onPaste={handlePaste} tabIndex={0} style={{border:"1.5px dashed #ddd",borderRadius:8,padding:"8px 12px",minHeight:36,outline:"none",background:locked?"#f5f5f5":"#fafafa",display:"flex",flexWrap:"wrap",gap:8,alignItems:"center",cursor:locked?"not-allowed":"text"}} onFocus={e=>{if(!locked)e.currentTarget.style.borderColor="#534AB7";}} onBlur={e=>e.currentTarget.style.borderColor="#ddd"}>
       {imgs.length===0&&<span style={{fontSize:12,color:"#ccc"}}>{locked?"Blocat":"Click + Ctrl+V pentru a lipi o imagine"}</span>}

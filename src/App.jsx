@@ -1,4 +1,4 @@
-// Jurnal Decizii - Annterior Studio
+// @font-face via Google Fonts - loaded in index.html
 import { useState, useEffect, useCallback } from "react";
 
 
@@ -163,7 +163,9 @@ function LinksList({links,onChange}){
 
 function AttachList({attachments,onChange}){
   const fmtSize=s=>s>1048576?(s/1048576).toFixed(1)+"MB":(s/1024).toFixed(0)+"KB";
-  const handleFile=e=>{Array.from(e.target.files||[]).forEach(file=>{uploadFile(file,'attachments').then(url=>onChange([...(attachments||[]),{name:file.name,size:file.size,data:url,isUrl:true}])).catch(err=>{console.error('Upload failed',err);const r=new FileReader();r.onload=ev=>onChange([...(attachments||[]),{name:file.name,size:file.size,data:ev.target.result}]);r.readAsDataURL(file);});});e.target.value="";};
+  const handleFile=e=>{Array.from(e.target.files||[]).forEach(file=>{// Afiseaza imediat cu URL local temporar
+const tempUrl=URL.createObjectURL(file);const tempEntry={name:file.name,size:file.size,data:tempUrl,uploading:true};const newAt=[...(attachments||[]),tempEntry];onChange(newAt);// Upload in background
+uploadFile(file,'attachments').then(url=>{onChange(newAt.map(x=>x===tempEntry?{name:file.name,size:file.size,data:url,isUrl:true}:x));}).catch(()=>{onChange(newAt.map(x=>x===tempEntry?{...x,uploading:false}:x));});});e.target.value="";};
   const at=attachments||[];
   return(<div style={{marginBottom:12}}>
     <label style={{display:"block",fontSize:12,color:"#888",marginBottom:6,fontWeight:500}}>Atasamente</label>
@@ -180,7 +182,9 @@ function AttachList({attachments,onChange}){
 
 function ImgPaste({images,onChange,locked}){
   const imgs=images||[];
-  const handlePaste=e=>{if(locked)return;const items=e.clipboardData&&e.clipboardData.items;if(!items)return;for(let i=0;i<items.length;i++){if(items[i].type.startsWith("image/")){const r=new FileReader();r.onload=ev=>compressImage(ev.target.result).then(compressed=>uploadDataUrl(compressed,'jpg','images').then(url=>onChange([...imgs,url])).catch(()=>onChange([...imgs,compressed])));r.readAsDataURL(items[i].getAsFile());}}};
+  const handlePaste=e=>{if(locked)return;const items=e.clipboardData&&e.clipboardData.items;if(!items)return;for(let i=0;i<items.length;i++){if(items[i].type.startsWith("image/")){const r=new FileReader();r.onload=ev=>{const localUrl=ev.target.result;// Afiseaza imediat local
+compressImage(localUrl).then(compressed=>{const newImgs=[...imgs,compressed];onChange(newImgs);// Upload in background - inlocuieste cu URL permanent
+uploadDataUrl(compressed,'jpg','images').then(url=>{onChange(newImgs.map(x=>x===compressed?url:x));}).catch(()=>{});});};r.readAsDataURL(items[i].getAsFile());}}};
   return(<div style={{marginBottom:12}}>
     <div onPaste={handlePaste} tabIndex={0} style={{border:"1.5px dashed #ddd",borderRadius:8,padding:"8px 12px",minHeight:36,outline:"none",background:locked?"#f5f5f5":"#fafafa",display:"flex",flexWrap:"wrap",gap:8,alignItems:"center",cursor:locked?"not-allowed":"text"}} onFocus={e=>{if(!locked)e.currentTarget.style.borderColor="#534AB7";}} onBlur={e=>e.currentTarget.style.borderColor="#ddd"}>
       {imgs.length===0&&<span style={{fontSize:12,color:"#ccc"}}>{locked?"Blocat":"Click + Ctrl+V pentru a lipi o imagine"}</span>}

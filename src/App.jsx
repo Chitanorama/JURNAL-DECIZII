@@ -538,7 +538,7 @@ export default function App(){
             {isAdmin&&<button onClick={()=>{setPf(makeProj());setDrawer("newProject");}} style={{fontSize:13,padding:"5px 12px"}}>+ Proiect</button>}
             {isAdmin&&<button onClick={()=>setDrawer("users")} style={{fontSize:13,padding:"5px 12px"}}>Utilizatori</button>}
             {isAdmin&&<button onClick={openSettings} style={{fontSize:13,padding:"5px 12px"}}>Setari</button>}
-            {!isClient&&<Btn1 onClick={openNew}>+ Decizie</Btn1>}
+            <Btn1 onClick={openNew}>+ Decizie</Btn1>
             <button onClick={logout} style={{fontSize:13,padding:"5px 12px",color:"#aaa"}}>Iesi</button>
           </div>
         </div>
@@ -574,7 +574,7 @@ export default function App(){
               {filtered.length===0
                 ?<tr><td colSpan={6} style={{padding:"3rem",textAlign:"center",color:"#aaa",fontSize:14}}>{decisions.length===0?"Niciun topic inregistrat.":"Niciun rezultat."}</td></tr>
                 :filtered.map(d=>(
-                  <tr key={d.id} onClick={()=>{setDid(d.id);setCtxt("");setCname("");setCimgs([]);setDrawer("detail");}}
+                  <tr key={d.id} onClick={()=>{setDid(d.id);setCtxt("");const myName=projectTeam.find(m=>m.toLowerCase().includes((session.name||'').toLowerCase()))||session.name;setCname(myName);setCimgs([]);setDrawer("detail");}}
                     style={{cursor:"pointer",borderBottom:"1px solid #e8e6e1",background:did===d.id&&drawer==="detail"?"#f0eeeb":"#fff"}}
                     onMouseEnter={e=>e.currentTarget.style.background=did===d.id&&drawer==="detail"?"#f0eeeb":"#fafaf8"}
                     onMouseLeave={e=>e.currentTarget.style.background=did===d.id&&drawer==="detail"?"#f0eeeb":"#fff"}>
@@ -662,7 +662,7 @@ export default function App(){
           <div style={{borderTop:"1px solid #eee",paddingTop:12}}>
             <select value={cname} onChange={e=>setCname(e.target.value)} style={{width:"100%",boxSizing:"border-box",marginBottom:8,fontSize:13}}>
               <option value="">- cine scrie? -</option>
-              {projectTeam.map(m=><option key={m}>{m}</option>)}
+              {[...new Set([...projectTeam,...(session.name&&!projectTeam.some(m=>m.toLowerCase().includes(session.name.toLowerCase()))?[session.name]:[])])].map(m=><option key={m}>{m}</option>)}
             </select>
             <textarea value={ctxt} onChange={e=>setCtxt(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();addComment();}}} placeholder="Scrie un mesaj... (Enter pentru trimite)" style={{width:"100%",boxSizing:"border-box",minHeight:60,resize:"vertical",fontFamily:"'DM Sans','Helvetica Neue',Arial,sans-serif",fontSize:13,padding:"8px 10px",border:"1px solid #e8e4df",borderRadius:8,background:"#fff",color:"#2c2c2c",marginBottom:6}}/>
             <ImgPaste images={cimgs} onChange={setCimgs}/>

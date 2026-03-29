@@ -222,11 +222,9 @@ export default function App(){
   const [ctxt,setCtxt]=useState("");
   const [cname,setCname]=useState("");
   const [cimgs,setCimgs]=useState([]);
-  const [confirmDel,setConfirmDel]=useState(false);
+  const [dbError, setDbError] = useState("");
 
-  const isAdmin=session&&session.role==="admin";
-  const isClient=session&&session.role==="client";
-
+  // Load global settings (phases, specs, users)
   const loadGlobal = useCallback(async()=>{
     try {
       const rows = await dbGet("settings");
@@ -258,6 +256,7 @@ export default function App(){
   useEffect(()=>{
     if(!ap) return;
     loadDecisions(ap.id).then(setDecisions);
+    // Poll every 10s for real-time updates
     const interval = setInterval(()=>loadDecisions(ap.id).then(setDecisions), 10000);
     return ()=>clearInterval(interval);
   },[ap,loadDecisions]);
@@ -265,6 +264,23 @@ export default function App(){
   const savePhases2=async p=>{setPhases(p);await dbUpsert("settings",{id:"phases",data:p});};
   const saveSpecs2=async s=>{setSpecs(s);await dbUpsert("settings",{id:"specs",data:s});};
 
+  const saveUsers2=async u=>{
+    setUsers(u);
+    await Promise.all(u.map(usr=>dbUpsert("users",{id:usr.id||usr.name,data:usr})));
+  };
+
+  // TEST conexiune Supabase
+  const [testMsg, setTestMsg] = useState("");
+  const testConnection = async () => {
+    setTestMsg("Se testeaza...");
+    try {
+      const r = await dbGet("projects");
+      setTestMsg("Conexiune OK! Proiecte in DB: " + r.length);
+    } catch(e) {
+      setTestMsg("EROARE: " + e.message);
+    }
+  };
+  const isClient=session&&session.role==="client";
   const projectTeam=ap?(ap.team||[]).concat(ap.client&&!(ap.team||[]).includes(ap.client)?[ap.client+" (client)"]:[]):[];
 
   const handleLogin=async()=>{
@@ -295,16 +311,18 @@ export default function App(){
 
   const addProject=async()=>{
     if(!pf.name.trim())return;
-    setLoading(true);
+    setLoading(true); setDbError("");
     try {
       const team=(pf.team||[]).includes(ADMIN_NAME)?pf.team:[ADMIN_NAME,...(pf.team||[])];
       const p=Object.assign({},pf,{id:Date.now().toString(),team,created:new Date().toISOString().slice(0,10)});
-      await dbUpsert("projects",{id:p.id,data:p});
+      const result = await dbUpsert("projects",{id:p.id,data:p});
+      console.log("upsert result:", result);
       const upd=[...projects,p]; setProjects(upd);
       if(isAdmin)setSession(s=>Object.assign({},s,{projectIds:s.projectIds.concat([p.id])}));
       setAp(p); setPf(makeProj()); setDrawer(null);
     } catch(e){
       console.error("addProject error:",e);
+      setDbError("Eroare: "+e.message);
     }
     setLoading(false);
   };
@@ -424,14 +442,8 @@ export default function App(){
         <span style={{fontWeight:500,fontSize:13,color:"#aaa",letterSpacing:"0.03em"}}>JURNAL DE DECIZII</span>
         <button onClick={logout} style={{fontSize:13,padding:"5px 12px",color:"#aaa"}}>Iesi</button>
       </div>
-      <ProjectCards
-        projects={myProjects}
-        onSelect={setAp}
-        userName={session.name}
-        isAdmin={isAdmin}
-        onNew={()=>{setPf(makeProj());setDrawer("newProject");}}
-        onUsers={()=>setDrawer("users")}
-      />
+
+        onNew={()=>{setPf(makeProj());setDrawer("newProject");}} onUsers={()=>setDrawer("users")}/>
       {drawer==="newProject"&&<Drawer title="Proiect nou" onClose={()=>setDrawer(null)}>
         <Card2>
           <SecTitle2>Detalii proiect</SecTitle2>

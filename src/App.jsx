@@ -1,6 +1,28 @@
 // @font-face via Google Fonts - loaded in index.html
 import { useState, useEffect, useCallback } from "react";
 
+
+// Comprima imaginile inainte de salvare - max 1000px, calitate 75%
+function compressImage(dataUrl, maxSize=1000, quality=0.75) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let w = img.width, h = img.height;
+      if (w > maxSize || h > maxSize) {
+        if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
+        else { w = Math.round(w * maxSize / h); h = maxSize; }
+      }
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = () => resolve(dataUrl);
+    img.src = dataUrl;
+  });
+}
+
 const SUPABASE_URL = "https://aphldgxfusyccyidzvze.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFwaGxkZ3hmdXN5Y2N5aWR6dnplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3MjMzMTAsImV4cCI6MjA5MDI5OTMxMH0.7wv92ujW6N-61R58bwC9zRbN3AmDgXNhgOxj8JyJSJM";
 
@@ -111,7 +133,7 @@ function LinksList({links,onChange}){
 
 function AttachList({attachments,onChange}){
   const fmtSize=s=>s>1048576?(s/1048576).toFixed(1)+"MB":(s/1024).toFixed(0)+"KB";
-  const handleFile=e=>{Array.from(e.target.files||[]).forEach(file=>{const r=new FileReader();r.onload=ev=>onChange([...(attachments||[]),{name:file.name,size:file.size,data:ev.target.result}]);r.readAsDataURL(file);});e.target.value="";};
+  const handleFile=e=>{Array.from(e.target.files||[]).forEach(file=>{const r=new FileReader();r.onload=ev=>{if(file.type.startsWith("image/")){compressImage(ev.target.result).then(compressed=>onChange([...(attachments||[]),{name:file.name,size:file.size,data:compressed}]));}else{onChange([...(attachments||[]),{name:file.name,size:file.size,data:ev.target.result}]);}};r.readAsDataURL(file);});e.target.value="";};
   const at=attachments||[];
   return(<div style={{marginBottom:12}}>
     <label style={{display:"block",fontSize:12,color:"#888",marginBottom:6,fontWeight:500}}>Atasamente</label>
@@ -128,7 +150,7 @@ function AttachList({attachments,onChange}){
 
 function ImgPaste({images,onChange,locked}){
   const imgs=images||[];
-  const handlePaste=e=>{if(locked)return;const items=e.clipboardData&&e.clipboardData.items;if(!items)return;for(let i=0;i<items.length;i++){if(items[i].type.startsWith("image/")){const r=new FileReader();r.onload=ev=>onChange([...imgs,ev.target.result]);r.readAsDataURL(items[i].getAsFile());}}};
+  const handlePaste=e=>{if(locked)return;const items=e.clipboardData&&e.clipboardData.items;if(!items)return;for(let i=0;i<items.length;i++){if(items[i].type.startsWith("image/")){const r=new FileReader();r.onload=ev=>compressImage(ev.target.result).then(compressed=>onChange([...imgs,compressed]));r.readAsDataURL(items[i].getAsFile());}}};
   return(<div style={{marginBottom:12}}>
     <div onPaste={handlePaste} tabIndex={0} style={{border:"1.5px dashed #ddd",borderRadius:8,padding:"8px 12px",minHeight:36,outline:"none",background:locked?"#f5f5f5":"#fafafa",display:"flex",flexWrap:"wrap",gap:8,alignItems:"center",cursor:locked?"not-allowed":"text"}} onFocus={e=>{if(!locked)e.currentTarget.style.borderColor="#534AB7";}} onBlur={e=>e.currentTarget.style.borderColor="#ddd"}>
       {imgs.length===0&&<span style={{fontSize:12,color:"#ccc"}}>{locked?"Blocat":"Click + Ctrl+V pentru a lipi o imagine"}</span>}

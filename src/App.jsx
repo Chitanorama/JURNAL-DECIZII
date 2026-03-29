@@ -1,3 +1,4 @@
+// @font-face via Google Fonts - loaded in index.html
 import { useState, useEffect, useCallback } from "react";
 
 const SUPABASE_URL = "https://aphldgxfusyccyidzvze.supabase.co";
@@ -62,10 +63,10 @@ const Badge2=({status})=>{const c=STATUS_COLORS[status]||STATUS_COLORS["In astep
 const PhasePill2=({phase})=>{const col=PHASE_COLORS[phase]||"#888";return <span style={{background:col+"18",color:col,border:"1px solid "+col+"44",borderRadius:20,padding:"3px 10px",fontSize:11,fontWeight:500,whiteSpace:"nowrap"}}>{phase}</span>;};
 const SecTitle2=({children})=><div style={{fontSize:11,fontWeight:500,color:"#888",textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:10,paddingBottom:6,borderBottom:"1px solid #eee"}}>{children}</div>;
 const Card2=({children,style})=><div style={{background:"#fff",border:"1px solid #e8e6e1",borderRadius:10,padding:"14px 16px",...(style||{})}}>{children}</div>;
-const Btn1=({children,disabled,onClick})=><button onClick={onClick} disabled={!!disabled} style={{fontWeight:500,background:disabled?"#eee":"#534AB7",color:disabled?"#aaa":"#fff",border:"none",borderRadius:8,padding:"7px 20px",cursor:disabled?"not-allowed":"pointer",fontSize:13}}>{children}</button>;
+const Btn1=({children,disabled,onClick})=><button onClick={onClick} disabled={!!disabled} style={{fontWeight:500,background:disabled?"#eee":"#3d3530",color:disabled?"#aaa":"#fff",border:"none",borderRadius:8,padding:"7px 20px",cursor:disabled?"not-allowed":"pointer",fontSize:13}}>{children}</button>;
 const Inp=({label,...p})=><div style={{marginBottom:12}}>{label&&<label style={{display:"block",fontSize:12,color:"#888",marginBottom:3,fontWeight:500}}>{label}</label>}<input style={{width:"100%",boxSizing:"border-box",background:"#fff"}} {...p}/></div>;
 const Sel=({label,children,...p})=><div style={{marginBottom:12}}>{label&&<label style={{display:"block",fontSize:12,color:"#888",marginBottom:3,fontWeight:500}}>{label}</label>}<select style={{width:"100%",boxSizing:"border-box",background:"#fff"}} {...p}>{children}</select></div>;
-const Txt=({label,locked,...p})=><div style={{marginBottom:8}}>{label&&<label style={{display:"block",fontSize:12,color:"#888",marginBottom:3,fontWeight:500}}>{label}</label>}<textarea style={{width:"100%",boxSizing:"border-box",minHeight:68,resize:"vertical",fontFamily:"'Helvetica Neue',Helvetica,Arial,sans-serif",fontSize:14,padding:"8px 10px",border:"1px solid #ddd",borderRadius:8,background:locked?"#f5f5f5":"#fff",color:"#2c2c2c",cursor:locked?"not-allowed":"text"}} readOnly={!!locked} {...p}/></div>;
+const Txt=({label,locked,...p})=><div style={{marginBottom:8}}>{label&&<label style={{display:"block",fontSize:12,color:"#888",marginBottom:3,fontWeight:500}}>{label}</label>}<textarea style={{width:"100%",boxSizing:"border-box",minHeight:68,resize:"vertical",fontFamily:"'DM Sans','Helvetica Neue',Arial,sans-serif",fontSize:14,padding:"8px 10px",border:"1px solid #e8e4df",borderRadius:8,background:locked?"#f5f5f5":"#fff",color:"#2c2c2c",cursor:locked?"not-allowed":"text"}} readOnly={!!locked} {...p}/></div>;
 
 function AddableSel({label,value,onChange,options,onAdd,onDelete,canAdd}){
   const [adding,setAdding]=useState(false);
@@ -73,7 +74,7 @@ function AddableSel({label,value,onChange,options,onAdd,onDelete,canAdd}){
   const doAdd=()=>{if(!nv.trim())return;onAdd(nv.trim());onChange(nv.trim());setNv("");setAdding(false);};
   return(<div style={{marginBottom:14}}>
     {label&&<label style={{display:"block",fontSize:12,color:"#888",marginBottom:3,fontWeight:500}}>{label}</label>}
-    <div style={{display:"flex",alignItems:"center",border:"1px solid #ddd",borderRadius:8,overflow:"hidden",background:"#fff"}}>
+    <div style={{display:"flex",alignItems:"center",border:"1px solid #e8e4df",borderRadius:8,overflow:"hidden",background:"#fff"}}>
       <select value={value} onChange={e=>onChange(e.target.value)} style={{flex:1,border:"none",outline:"none",background:"transparent",fontSize:14,padding:"8px 10px",cursor:"pointer"}}>
         {options.map(o=><option key={o}>{o}</option>)}
       </select>
@@ -96,7 +97,7 @@ function LinksList({links,onChange}){
   const ls=links||[];
   return(<div style={{marginBottom:12}}>
     <label style={{display:"block",fontSize:12,color:"#888",marginBottom:6,fontWeight:500}}>Linkuri</label>
-    {ls.map((l,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6,background:"#fafafa",border:"1px solid #eee",borderRadius:7,padding:"6px 10px"}}>
+    {ls.map((l,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6,background:"#fafafa",border:"1px solid #ede9e4",borderRadius:7,padding:"6px 10px"}}>
       <a href={l.url} target="_blank" rel="noopener noreferrer" style={{fontSize:13,flex:1,color:"#534AB7",textDecoration:"none",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{l.label}</a>
       <span onClick={()=>onChange(ls.filter((_,j)=>j!==i))} style={{cursor:"pointer",color:"#bbb",fontSize:12}}>x</span>
     </div>)}
@@ -114,12 +115,12 @@ function AttachList({attachments,onChange}){
   const at=attachments||[];
   return(<div style={{marginBottom:12}}>
     <label style={{display:"block",fontSize:12,color:"#888",marginBottom:6,fontWeight:500}}>Atasamente</label>
-    {at.map((a,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6,background:"#fafafa",border:"1px solid #eee",borderRadius:7,padding:"6px 10px"}}>
+    {at.map((a,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6,background:"#fafafa",border:"1px solid #ede9e4",borderRadius:7,padding:"6px 10px"}}>
       <a href={a.data} download={a.name} style={{fontSize:13,flex:1,color:"#534AB7",textDecoration:"none",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{a.name}</a>
       <span style={{fontSize:11,color:"#aaa",flexShrink:0}}>{fmtSize(a.size)}</span>
       <span onClick={()=>onChange(at.filter((_,j)=>j!==i))} style={{cursor:"pointer",color:"#bbb",fontSize:12}}>x</span>
     </div>)}
-    <label style={{display:"inline-flex",alignItems:"center",gap:6,fontSize:13,padding:"5px 12px",border:"1px solid #ddd",borderRadius:7,cursor:"pointer",background:"#fff"}}>
+    <label style={{display:"inline-flex",alignItems:"center",gap:6,fontSize:13,padding:"5px 12px",border:"1px solid #e8e4df",borderRadius:7,cursor:"pointer",background:"#fff"}}>
       Alege fisier<input type="file" multiple style={{display:"none"}} onChange={handleFile}/>
     </label>
   </div>);
@@ -132,14 +133,14 @@ function ImgPaste({images,onChange,locked}){
     <div onPaste={handlePaste} tabIndex={0} style={{border:"1.5px dashed #ddd",borderRadius:8,padding:"8px 12px",minHeight:36,outline:"none",background:locked?"#f5f5f5":"#fafafa",display:"flex",flexWrap:"wrap",gap:8,alignItems:"center",cursor:locked?"not-allowed":"text"}} onFocus={e=>{if(!locked)e.currentTarget.style.borderColor="#534AB7";}} onBlur={e=>e.currentTarget.style.borderColor="#ddd"}>
       {imgs.length===0&&<span style={{fontSize:12,color:"#ccc"}}>{locked?"Blocat":"Click + Ctrl+V pentru a lipi o imagine"}</span>}
       {imgs.map((src,i)=><div key={i} style={{position:"relative"}}>
-        <img src={src} alt="" style={{height:56,borderRadius:6,border:"1px solid #eee",display:"block",cursor:"pointer"}} onClick={()=>window.open(src)}/>
+        <img src={src} alt="" style={{height:56,borderRadius:6,border:"1px solid #ede9e4",display:"block",cursor:"pointer"}} onClick={()=>window.open(src)}/>
         {!locked&&<span onClick={ev=>{ev.stopPropagation();onChange(imgs.filter((_,j)=>j!==i));}} style={{position:"absolute",top:-6,right:-6,background:"#A32D2D",color:"#fff",borderRadius:"50%",width:16,height:16,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,cursor:"pointer"}}>x</span>}
       </div>)}
     </div>
   </div>);
 }
 
-const ImgRow=({images})=>{const imgs=images||[];if(!imgs.length)return null;return <div style={{display:"flex",flexWrap:"wrap",gap:8,marginTop:8}}>{imgs.map((src,i)=><img key={i} src={src} alt="" style={{height:72,borderRadius:6,border:"1px solid #eee",cursor:"pointer"}} onClick={()=>window.open(src)}/>)}</div>;};
+const ImgRow=({images})=>{const imgs=images||[];if(!imgs.length)return null;return <div style={{display:"flex",flexWrap:"wrap",gap:8,marginTop:8}}>{imgs.map((src,i)=><img key={i} src={src} alt="" style={{height:72,borderRadius:6,border:"1px solid #ede9e4",cursor:"pointer"}} onClick={()=>window.open(src)}/>)}</div>;};
 
 function Drawer({title,onClose,children}){
   return(<div style={{position:"fixed",inset:0,zIndex:200,display:"flex"}} onClick={onClose}>
@@ -177,7 +178,7 @@ function ProjectCards({projects,onSelect,userName,isAdmin,onNew,onUsers}){
     <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:24,flexWrap:"wrap",gap:12}}>
       <div>
         <div style={{fontSize:13,color:"#aaa",letterSpacing:"0.05em",textTransform:"uppercase",marginBottom:4}}>{"Buna, "+userName+"!"}</div>
-        <h2 style={{fontWeight:500,fontSize:20,margin:0}}>Proiectele tale</h2>
+        <h2 style={{fontWeight:400,fontSize:22,margin:0,fontFamily:"Cormorant Garamond,Georgia,serif",letterSpacing:"0.03em"}}>Proiectele tale</h2>
       </div>
       {isAdmin&&<div style={{display:"flex",gap:8}}>
         <button onClick={onUsers} style={{fontSize:13,padding:"6px 14px"}}>Utilizatori</button>
@@ -187,10 +188,10 @@ function ProjectCards({projects,onSelect,userName,isAdmin,onNew,onUsers}){
     {projects.length===0
       ?<div style={{textAlign:"center",color:"#aaa",fontSize:14,padding:"3rem"}}>Niciun proiect. Apasa + Proiect nou.</div>
       :<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))",gap:14}}>
-        {projects.map(p=><div key={p.id} onClick={()=>onSelect(p)} style={{background:"#fff",border:"1px solid #e8e6e1",borderRadius:12,padding:"18px 18px 14px",cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.boxShadow="0 2px 12px rgba(0,0,0,0.08)"} onMouseLeave={e=>e.currentTarget.style.boxShadow="none"}>
-          <div style={{width:36,height:36,borderRadius:8,background:"#534AB715",border:"1px solid #534AB730",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,marginBottom:12}}>P</div>
+        {projects.map(p=><div key={p.id} onClick={()=>onSelect(p)} style={{background:"#fdf9f6",border:"1px solid #e8e2dc",borderRadius:12,padding:"20px 20px 16px",cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.boxShadow="0 2px 12px rgba(0,0,0,0.08)"} onMouseLeave={e=>e.currentTarget.style.boxShadow="none"}>
+          <div style={{width:40,height:40,borderRadius:"50%",background:"#f5f0ea",border:"1px solid #d4c9bc",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,marginBottom:14,color:"#8a7060"}}>✦</div>
           {p.projectCode&&<div style={{fontSize:11,color:"#aaa",marginBottom:2,fontWeight:500,letterSpacing:"0.04em"}}>{p.projectCode}</div>}
-          <div style={{fontWeight:500,fontSize:14,marginBottom:2}}>{p.name}</div>
+          <div style={{fontWeight:500,fontSize:15,marginBottom:4,letterSpacing:"0.02em"}}>{p.name}</div>
           {p.client&&<div style={{fontSize:12,color:"#888"}}>{p.client}</div>}
           {p.team&&p.team.length>0&&<div style={{fontSize:11,color:"#bbb",marginTop:8}}>{p.team.join(", ")}</div>}
         </div>)}
@@ -418,9 +419,9 @@ export default function App(){
 
   // LOGIN
   if(!session)return(
-    <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"#f8f7f5",padding:"2rem",boxSizing:"border-box"}}>
+    <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"#faf7f4",padding:"2rem",boxSizing:"border-box"}}>
       <div style={{width:"100%",maxWidth:380,textAlign:"center"}}>
-        <div style={{fontFamily:"'Helvetica Neue',Helvetica,Arial,sans-serif",fontSize:20,fontWeight:300,letterSpacing:"0.4em",color:"#2c2c2c",textTransform:"uppercase",marginBottom:16}}>ANNTERIOR</div>
+        <div style={{fontFamily:"'DM Sans','Helvetica Neue',Arial,sans-serif",fontSize:20,fontWeight:300,letterSpacing:"0.4em",color:"#2c2c2c",textTransform:"uppercase",marginBottom:16}}>ANNTERIOR</div>
         <div style={{width:28,height:1.5,background:"#c8b89a",margin:"0 auto 20px",borderRadius:2}}/>
         <h1 style={{fontWeight:300,fontSize:24,margin:"0 0 8px",color:"#2c2c2c"}}>Jurnal de decizii</h1>
         <p style={{color:"#bbb",fontSize:13,marginBottom:36,lineHeight:1.6}}>Introdu numele si codul de acces.</p>
@@ -439,9 +440,9 @@ export default function App(){
 
   // PROJECT SELECTION
   if(!ap)return(
-    <div style={{fontFamily:"'Helvetica Neue',Helvetica,Arial,sans-serif",background:"#f8f7f5",minHeight:"100vh"}}>
+    <div style={{fontFamily:"'DM Sans','Helvetica Neue',Arial,sans-serif",background:"#faf7f4",minHeight:"100vh"}}>
       <div style={{background:"#fff",borderBottom:"1.5px solid #e0ddd8",padding:"0 20px",display:"flex",alignItems:"center",justifyContent:"space-between",height:52}}>
-        <span style={{fontWeight:500,fontSize:13,color:"#aaa",letterSpacing:"0.03em"}}>JURNAL DE DECIZII</span>
+        <span style={{fontWeight:400,fontSize:12,color:"#b8afa8",letterSpacing:"0.12em"}}>JURNAL DE DECIZII</span>
         <button onClick={logout} style={{fontSize:13,padding:"5px 12px",color:"#aaa"}}>Iesi</button>
       </div>
 
@@ -466,11 +467,11 @@ export default function App(){
 
   // PROJECT VIEW
   return(
-    <div style={{fontFamily:"'Helvetica Neue',Helvetica,Arial,sans-serif",background:"#f8f7f5",minHeight:"100vh"}}>
+    <div style={{fontFamily:"'DM Sans','Helvetica Neue',Arial,sans-serif",background:"#faf7f4",minHeight:"100vh"}}>
       <div style={{background:"#fff",borderBottom:"1.5px solid #e0ddd8",padding:"0 20px"}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",height:52,flexWrap:"wrap",gap:8}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
-            <span onClick={()=>{if(!isClient)setAp(null);}} style={{fontWeight:500,fontSize:13,color:"#aaa",letterSpacing:"0.03em",cursor:isClient?"default":"pointer"}}>JURNAL DE DECIZII</span>
+            <span onClick={()=>{if(!isClient)setAp(null);}} style={{fontWeight:400,fontSize:12,color:"#b8afa8",letterSpacing:"0.12em",cursor:isClient?"default":"pointer"}}>JURNAL DE DECIZII</span>
             <span style={{color:"#ddd",fontSize:18}}>/</span>
             {ap.projectCode&&<span style={{fontSize:12,color:"#aaa",fontWeight:500}}>{ap.projectCode}</span>}
             {ap.projectCode&&<span style={{color:"#ddd"}}>·</span>}
@@ -509,7 +510,7 @@ export default function App(){
           </div>
           <table style={{width:"100%",borderCollapse:"collapse",tableLayout:"fixed"}}>
             <colgroup><col style={{width:"30%"}}/><col style={{width:"12%"}}/><col style={{width:"16%"}}/><col style={{width:"18%"}}/><col style={{width:"18%"}}/><col style={{width:"6%"}}/></colgroup>
-            <thead style={{background:"#f0eeeb"}}>
+            <thead style={{background:"#f5f0ea"}}>
               <tr>{["Topic","Faza","Specialitate","Decide","Status",""].map((h,i)=><th key={i} style={{padding:"8px 16px",fontSize:11,color:"#999",fontWeight:500,textTransform:"uppercase",letterSpacing:"0.06em",textAlign:"left",borderBottom:"1px solid #e8e6e1"}}>{h}</th>)}</tr>
             </thead>
             <tbody>
@@ -551,7 +552,7 @@ export default function App(){
         <div style={{marginBottom:16}}>
           <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:10}}>
             <PhasePill2 phase={dd.category}/>
-            <span style={{fontSize:11,color:"#666",background:"#f0eeeb",border:"1px solid #ddd",borderRadius:20,padding:"3px 10px"}}>{dd.specialty}</span>
+            <span style={{fontSize:11,color:"#666",background:"#f5f0ea",border:"1px solid #e8e4df",borderRadius:20,padding:"3px 10px"}}>{dd.specialty}</span>
             <Badge2 status={dd.status}/>
           </div>
           {dd.title&&<div style={{fontWeight:500,fontSize:18,lineHeight:1.3,marginBottom:6}}>{dd.title}</div>}
@@ -595,7 +596,7 @@ export default function App(){
                   <div style={{maxWidth:"85%",background:mine?"#E6F1FB":"#f0eeeb",borderRadius:mine?"12px 12px 2px 12px":"12px 12px 12px 2px",padding:"8px 12px",border:"1px solid "+(mine?"#B5D4F4":"#ddd")}}>
                     <div style={{fontSize:11,color:mine?"#185FA5":"#888",marginBottom:3,fontWeight:500}}>{c.author}</div>
                     <div style={{fontSize:13,lineHeight:1.5}}>{c.text}</div>
-                    {c.images&&c.images.length>0&&<div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:6}}>{c.images.map((src,j)=><img key={j} src={src} alt="" style={{height:60,borderRadius:5,border:"1px solid #ddd",cursor:"pointer"}} onClick={()=>window.open(src)}/>)}</div>}
+                    {c.images&&c.images.length>0&&<div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:6}}>{c.images.map((src,j)=><img key={j} src={src} alt="" style={{height:60,borderRadius:5,border:"1px solid #e8e4df",cursor:"pointer"}} onClick={()=>window.open(src)}/>)}</div>}
                   </div>
                   <div style={{fontSize:11,color:"#bbb",marginTop:2,padding:"0 4px"}}>{c.date+" "+c.time}</div>
                 </div>);})}
@@ -605,7 +606,7 @@ export default function App(){
               <option value="">- cine scrie? -</option>
               {projectTeam.map(m=><option key={m}>{m}</option>)}
             </select>
-            <textarea value={ctxt} onChange={e=>setCtxt(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();addComment();}}} placeholder="Scrie un mesaj... (Enter pentru trimite)" style={{width:"100%",boxSizing:"border-box",minHeight:60,resize:"vertical",fontFamily:"'Helvetica Neue',Helvetica,Arial,sans-serif",fontSize:13,padding:"8px 10px",border:"1px solid #ddd",borderRadius:8,background:"#fff",color:"#2c2c2c",marginBottom:6}}/>
+            <textarea value={ctxt} onChange={e=>setCtxt(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();addComment();}}} placeholder="Scrie un mesaj... (Enter pentru trimite)" style={{width:"100%",boxSizing:"border-box",minHeight:60,resize:"vertical",fontFamily:"'DM Sans','Helvetica Neue',Arial,sans-serif",fontSize:13,padding:"8px 10px",border:"1px solid #e8e4df",borderRadius:8,background:"#fff",color:"#2c2c2c",marginBottom:6}}/>
             <ImgPaste images={cimgs} onChange={setCimgs}/>
             <div style={{display:"flex",justifyContent:"flex-end",marginTop:6}}>
               <Btn1 onClick={addComment} disabled={!ctxt.trim()||!cname}>Trimite</Btn1>
@@ -642,7 +643,7 @@ export default function App(){
               {projectTeam.map(m=><option key={m}>{m}</option>)}
             </Sel>
             {eid&&form.decisionOwner&&!isAdmin
-              ?<div style={{marginBottom:12}}><label style={{display:"block",fontSize:12,color:"#888",marginBottom:3,fontWeight:500}}>Decide</label><div style={{padding:"8px 10px",background:"#f0eeeb",border:"1px solid #ddd",borderRadius:8,fontSize:14,color:"#444"}}>{form.decisionOwner+" (blocat)"}</div></div>
+              ?<div style={{marginBottom:12}}><label style={{display:"block",fontSize:12,color:"#888",marginBottom:3,fontWeight:500}}>Decide</label><div style={{padding:"8px 10px",background:"#f5f0ea",border:"1px solid #e8e4df",borderRadius:8,fontSize:14,color:"#444"}}>{form.decisionOwner+" (blocat)"}</div></div>
               :<Sel label={isAdmin&&eid&&form.decisionOwner?"Decide (admin override)":"Decide"} value={form.decisionOwner} onChange={e=>setForm(f=>Object.assign({},f,{decisionOwner:e.target.value}))}>
                 <option value="">- selecteaza -</option>
                 {projectTeam.map(m=><option key={m}>{m}</option>)}

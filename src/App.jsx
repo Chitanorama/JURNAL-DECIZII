@@ -431,6 +431,7 @@ export default function App(){
 
   const canDelete=d=>isAdmin||(d.createdBy===session.name&&!hasDisc(d));
   const canDecide=d=>session&&d.decisionOwner&&d.decisionOwner===session.name;
+  const finalLocked=d=>!isAdmin&&d.status==="Decizie luata";
 
   const setDecStatus=async(d,status)=>{
     const updated=Object.assign({},d,{status,approvedBy:session.name,dateDecision:new Date().toISOString().slice(0,10)});
@@ -683,8 +684,6 @@ export default function App(){
           <Inp label="Titlu topic *" value={form.title||""} onChange={e=>setForm(f=>Object.assign({},f,{title:e.target.value}))} placeholder="ex. Decizie finisaj pardoseala living"/>
           <Txt label="Descriere / detalii" value={form.description} onChange={e=>{if(!contentLocked(form))setForm(f=>Object.assign({},f,{description:e.target.value}));}} placeholder="Descriere detaliata, context..." locked={contentLocked(form)}/>
           <ImgPaste images={form.descImages} onChange={imgs=>{if(!contentLocked(form))setForm(f=>Object.assign({},f,{descImages:imgs}));}} locked={contentLocked(form)}/>
-          <Txt label="Decizia finala" value={form.finalDecision} onChange={e=>setForm(f=>Object.assign({},f,{finalDecision:e.target.value}))} placeholder="Concluzia agreata dupa discutii..."/>
-          <ImgPaste images={form.finalImages} onChange={imgs=>setForm(f=>Object.assign({},f,{finalImages:imgs}))}/>
         </Card2>
         <Card2 style={{marginBottom:14}}>
           <SecTitle2>Linkuri si atasamente</SecTitle2>
@@ -705,7 +704,9 @@ export default function App(){
                 {projectTeam.map(m=><option key={m}>{m}</option>)}
               </Sel>}
           </div>
-          <Inp label="Data deciziei" type="date" value={form.dateDecision} onChange={e=>setForm(f=>Object.assign({},f,{dateDecision:e.target.value}))}/>
+          <Inp label="Data deciziei" type="date" value={form.dateDecision} onChange={e=>{if(!finalLocked(form)||isAdmin)setForm(f=>Object.assign({},f,{dateDecision:e.target.value}));}} readOnly={finalLocked(form)&&!isAdmin} style={{background:finalLocked(form)&&!isAdmin?"#f5f5f5":"#fff"}}/>
+          <Txt label="Decizia finala" value={form.finalDecision} onChange={e=>{if(!finalLocked(form))setForm(f=>Object.assign({},f,{finalDecision:e.target.value}));}} placeholder="Concluzia agreata dupa discutii..." locked={finalLocked(form)&&!isAdmin}/>
+          <ImgPaste images={form.finalImages} onChange={imgs=>{if(!finalLocked(form)||isAdmin)setForm(f=>Object.assign({},f,{finalImages:imgs}));}} locked={finalLocked(form)&&!isAdmin}/>
         </Card2>
         <div style={{display:"flex",gap:8,justifyContent:"flex-end"}}>
           <button onClick={()=>setDrawer(null)}>Anuleaza</button>

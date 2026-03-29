@@ -1,4 +1,4 @@
-// @font-face via Google Fonts - loaded in index.html
+// Jurnal Decizii - Annterior Studio
 import { useState, useEffect, useCallback } from "react";
 
 

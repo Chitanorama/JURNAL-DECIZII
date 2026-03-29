@@ -430,7 +430,7 @@ export default function App(){
   };
 
   const canDelete=d=>isAdmin||(d.createdBy===session.name&&!hasDisc(d));
-  const canDecide=d=>session&&d.decisionOwner&&(d.decisionOwner===session.name||d.decisionOwner===session.name+" (client)"||(d.decisionOwner||'').replace(' (client)','')===session.name);
+  const canDecide=d=>session&&d.decisionOwner&&(d.decisionOwner||'').toLowerCase().includes((session.name||'').toLowerCase());
   const finalLocked=d=>!isAdmin&&d.status==="Decizie luata";
 
   const setDecStatus=async(d,status)=>{

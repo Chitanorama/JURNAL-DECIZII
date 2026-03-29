@@ -483,7 +483,7 @@ export default function App(){
         <h1 style={{fontWeight:300,fontSize:24,margin:"0 0 8px",color:"#2c2c2c"}}>Jurnal de decizii</h1>
         <p style={{color:"#bbb",fontSize:13,marginBottom:36,lineHeight:1.6}}>Introdu numele si codul de acces.</p>
         <div style={{textAlign:"left"}}>
-          <Inp label="Numele tau" placeholder="ex. Anna, Mihai..." value={lname} onChange={e=>{setLname(e.target.value);setLerr("");}} onKeyDown={e=>e.key==="Enter"&&handleLogin()}/>
+          <Inp label="Numele tau" placeholder="ex. Prenume Nume" value={lname} onChange={e=>{setLname(e.target.value);setLerr("");}} onKeyDown={e=>e.key==="Enter"&&handleLogin()}/>
           <Inp label="Cod de acces" type="password" placeholder="••••••••" value={lcode} onChange={e=>{setLcode(e.target.value);setLerr("");}} onKeyDown={e=>e.key==="Enter"&&handleLogin()}/>
         </div>
         {lerr&&<div style={{fontSize:13,color:"#A32D2D",marginBottom:10,textAlign:"left"}}>{lerr}</div>}

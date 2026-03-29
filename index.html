@@ -1,9 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ro">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Jurnal de Decizii — Annterior</title>
+    <title>Jurnal de Decizii | Annterior</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body { 
+        font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        background: #faf7f4;
+      }
+      input, select, textarea, button {
+        font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+        font-size: 14px;
+        outline: none;
+        border: 1px solid #e8e4df;
+        border-radius: 8px;
+        padding: 8px 10px;
+        background: #fff;
+        color: #2c2c2c;
+        transition: border-color 0.15s;
+      }
+      input:focus, select:focus, textarea:focus {
+        border-color: #b8afa8;
+      }
+      button {
+        cursor: pointer;
+        border: 1px solid #e0dbd6;
+        background: #fff;
+        border-radius: 8px;
+        padding: 7px 16px;
+        font-size: 13px;
+        color: #3d3530;
+        transition: background 0.15s, border-color 0.15s;
+      }
+      button:hover {
+        background: #f5f0ea;
+        border-color: #d4c9bc;
+      }
+      ::-webkit-scrollbar { width: 5px; }
+      ::-webkit-scrollbar-track { background: #faf7f4; }
+      ::-webkit-scrollbar-thumb { background: #d4c9bc; border-radius: 10px; }
+    </style>
   </head>
   <body>
     <div id="root"></div>

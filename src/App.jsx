@@ -430,7 +430,7 @@ export default function App(){
   };
 
   const canDelete=d=>isAdmin||(d.createdBy===session.name&&!hasDisc(d));
-  const canDecide=d=>session&&d.decisionOwner&&d.decisionOwner===session.name;
+  const canDecide=d=>session&&d.decisionOwner&&(d.decisionOwner===session.name||d.decisionOwner===session.name+" (client)"||(d.decisionOwner||'').replace(' (client)','')===session.name);
   const finalLocked=d=>!isAdmin&&d.status==="Decizie luata";
 
   const setDecStatus=async(d,status)=>{
@@ -634,7 +634,8 @@ export default function App(){
           </div>
         </Card2>
         <div style={{display:"flex",gap:8,marginBottom:20,flexWrap:"wrap"}}>
-          {!isClient&&(isAdmin||(dd.createdBy===session.name))&&<button onClick={()=>{setDrawer(null);openEdit(dd);}} style={{fontSize:13,padding:"6px 16px"}}>Editeaza</button>}
+          {(isAdmin||dd.createdBy===session.name)&&!isClient&&<button onClick={()=>{setDrawer(null);openEdit(dd);}} style={{fontSize:13,padding:"6px 16px",border:"1px solid #ddd",borderRadius:8,cursor:"pointer"}}>Editeaza</button>}
+          {canDecide(dd)&&dd.status!=="Decizie luata"&&<button onClick={()=>{setDrawer(null);openEdit(dd);}} style={{fontSize:13,padding:"6px 16px",background:"#f5f0ea",border:"1px solid #d4c9bc",borderRadius:8,cursor:"pointer",fontWeight:500}}>Trece decizia</button>}
           {canDelete(dd)&&<button onClick={()=>deleteDec(dd)} style={{fontSize:13,padding:"6px 16px",color:"#A32D2D"}}>Sterge</button>}
           {canDecide(dd)&&dd.status!=="Decizie luata"&&(
             <div>
@@ -672,24 +673,24 @@ export default function App(){
         </Card2>
       </Drawer>}
 
-      {drawer==="decision"&&<Drawer title={eid?"Editeaza topic":"Topic nou"} onClose={()=>setDrawer(null)}>
-        <Card2 style={{marginBottom:14}}>
+      {drawer==="decision"&&<Drawer title={eid&&canDecide(form)&&!isAdmin?"Trece decizia":eid?"Editeaza topic":"Topic nou"} onClose={()=>setDrawer(null)}>
+        {(!eid||!canDecide(form)||isAdmin)&&<Card2 style={{marginBottom:14}}>
           <SecTitle2>Clasificare</SecTitle2>
           <AddableSel label="Faza" value={form.category} onChange={v=>setForm(f=>Object.assign({},f,{category:v}))} options={phases} onAdd={v=>savePhases2(phases.concat([v]))} onDelete={v=>savePhases2(phases.filter(p=>p!==v))} canAdd={isAdmin}/>
           <AddableSel label="Specialitate" value={form.specialty} onChange={v=>setForm(f=>Object.assign({},f,{specialty:v}))} options={specs} onAdd={v=>saveSpecs2(specs.concat([v]))} onDelete={v=>saveSpecs2(specs.filter(s=>s!==v))} canAdd={isAdmin}/>
-        </Card2>
-        <Card2 style={{marginBottom:14}}>
+        </Card2>}
+        {(!eid||!canDecide(form)||isAdmin)&&<Card2 style={{marginBottom:14}}>
           <SecTitle2>Continut</SecTitle2>
           {contentLocked(form)&&<div style={{fontSize:12,color:"#854F0B",background:"#FAEEDA",border:"1px solid #EF9F27",borderRadius:7,padding:"8px 12px",marginBottom:12}}>Campurile sunt blocate deoarece exista discutii. Doar adminul poate modifica.</div>}
           <Inp label="Titlu topic *" value={form.title||""} onChange={e=>setForm(f=>Object.assign({},f,{title:e.target.value}))} placeholder="ex. Decizie finisaj pardoseala living"/>
           <Txt label="Descriere / detalii" value={form.description} onChange={e=>{if(!contentLocked(form))setForm(f=>Object.assign({},f,{description:e.target.value}));}} placeholder="Descriere detaliata, context..." locked={contentLocked(form)}/>
           <ImgPaste images={form.descImages} onChange={imgs=>{if(!contentLocked(form))setForm(f=>Object.assign({},f,{descImages:imgs}));}} locked={contentLocked(form)}/>
-        </Card2>
-        <Card2 style={{marginBottom:14}}>
+        </Card2>}
+        {(!eid||!canDecide(form)||isAdmin)&&<Card2 style={{marginBottom:14}}>
           <SecTitle2>Linkuri si atasamente</SecTitle2>
           <LinksList links={form.links} onChange={v=>setForm(f=>Object.assign({},f,{links:v}))}/>
           <AttachList attachments={form.attachments} onChange={v=>setForm(f=>Object.assign({},f,{attachments:v}))}/>
-        </Card2>
+        </Card2>}
         <Card2 style={{marginBottom:14}}>
           <SecTitle2>Responsabilitate</SecTitle2>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 12px"}}>

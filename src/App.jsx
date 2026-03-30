@@ -255,6 +255,13 @@ function ProjectCards({projects,onSelect,userName,isAdmin,onNew,onUsers}){
   </div>);
 }
 
+// Fix mobile viewport height
+if(typeof window!=='undefined'){
+  const setVh=()=>document.documentElement.style.setProperty('--vh',window.innerHeight*0.01+'px');
+  window.addEventListener('resize',setVh);
+  setVh();
+}
+
 export default function App(){
   const [session,setSession]=useState(null);
   const [lname,setLname]=useState("");

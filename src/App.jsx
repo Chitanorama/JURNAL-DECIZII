@@ -572,19 +572,29 @@ export default function App(){
               {STATUSES.map(s=><option key={s}>{s}</option>)}
             </select>
           </div>
-          <table style={{width:"100%",borderCollapse:"collapse",tableLayout:"fixed"}}>
+          <style>{`
+            @media (max-width: 640px) {
+              .decision-table { display: none !important; }
+              .decision-cards { display: flex !important; }
+            }
+            @media (min-width: 641px) {
+              .decision-table { display: table !important; }
+              .decision-cards { display: none !important; }
+            }
+          `}</style>
+          <table className="decision-table" style={{width:"100%",borderCollapse:"collapse",tableLayout:"fixed",display:"table"}}>
             <colgroup><col style={{width:"30%"}}/><col style={{width:"12%"}}/><col style={{width:"16%"}}/><col style={{width:"18%"}}/><col style={{width:"18%"}}/><col style={{width:"6%"}}/></colgroup>
             <thead style={{background:"#f5f0ea"}}>
-              <tr>{["Topic","Faza","Specialitate","Decide","Status",""].map((h,i)=><th key={i} style={{padding:"8px 16px",fontSize:11,color:"#999",fontWeight:500,textTransform:"uppercase",letterSpacing:"0.06em",textAlign:"left",borderBottom:"1px solid #e8e6e1"}}>{h}</th>)}</tr>
+              <tr>{["Topic","Faza","Specialitate","Decide","Status",""].map((h,i)=><th key={i} style={{padding:"8px 16px",fontSize:11,color:"#999",fontWeight:500,textTransform:"uppercase",letterSpacing:"0.06em",textAlign:"left",borderBottom:"1px solid #e8e4df"}}>{h}</th>)}</tr>
             </thead>
             <tbody>
               {filtered.length===0
                 ?<tr><td colSpan={6} style={{padding:"3rem",textAlign:"center",color:"#aaa",fontSize:14}}>{decisions.length===0?"Niciun topic inregistrat.":"Niciun rezultat."}</td></tr>
                 :filtered.map(d=>(
-                  <tr key={d.id} onClick={()=>{setDid(d.id);setCtxt("");const myName=projectTeam.find(m=>m.toLowerCase().includes((session.name||'').toLowerCase()))||session.name;setCname(myName);setCimgs([]);setDrawer("detail");}}
-                    style={{cursor:"pointer",borderBottom:"1px solid #e8e6e1",background:did===d.id&&drawer==="detail"?"#f0eeeb":"#fff"}}
-                    onMouseEnter={e=>e.currentTarget.style.background=did===d.id&&drawer==="detail"?"#f0eeeb":"#fafaf8"}
-                    onMouseLeave={e=>e.currentTarget.style.background=did===d.id&&drawer==="detail"?"#f0eeeb":"#fff"}>
+                  <tr key={d.id} onClick={()=>{setDid(d.id);setCtxt("");setCname("");setCimgs([]);setDrawer("detail");}}
+                    style={{cursor:"pointer",borderBottom:"1px solid #e8e4df",background:did===d.id&&drawer==="detail"?"#f5f0ea":"#fff"}}
+                    onMouseEnter={e=>e.currentTarget.style.background=did===d.id&&drawer==="detail"?"#f5f0ea":"#faf7f4"}
+                    onMouseLeave={e=>e.currentTarget.style.background=did===d.id&&drawer==="detail"?"#f5f0ea":"#fff"}>
                     <td style={{padding:"11px 16px",verticalAlign:"middle",maxWidth:0,overflow:"hidden"}}>
                       <div style={{fontSize:14,fontWeight:500,marginBottom:3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{d.title||d.description.split("\n")[0]}</div>
                       <div style={{fontSize:12,color:"#aaa",display:"flex",gap:10}}>
@@ -609,6 +619,32 @@ export default function App(){
               }
             </tbody>
           </table>
+          <div className="decision-cards" style={{flexDirection:"column",display:"none"}}>
+            {filtered.length===0
+              ?<div style={{padding:"3rem",textAlign:"center",color:"#aaa",fontSize:14}}>{decisions.length===0?"Niciun topic inregistrat.":"Niciun rezultat."}</div>
+              :filtered.map(d=>(
+                <div key={d.id} onClick={()=>{setDid(d.id);setCtxt("");setCname("");setCimgs([]);setDrawer("detail");}}
+                  style={{padding:"14px 16px",borderBottom:"1px solid #e8e4df",background:did===d.id&&drawer==="detail"?"#f5f0ea":"#fff",cursor:"pointer"}}>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8,gap:8}}>
+                    <div style={{fontSize:14,fontWeight:500,flex:1,lineHeight:1.4}}>{d.title||d.description.split("\n")[0]}</div>
+                    <Badge2 status={d.status}/>
+                  </div>
+                  <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:6}}>
+                    <PhasePill2 phase={d.category}/>
+                    <span style={{fontSize:11,color:"#888",background:"#f5f0ea",border:"1px solid #e8e4df",borderRadius:20,padding:"3px 10px"}}>{d.specialty}</span>
+                  </div>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                    <div style={{fontSize:12,color:"#aaa",display:"flex",gap:8}}>
+                      {d.createdBy&&<span>{"de "+d.createdBy}</span>}
+                      <span>{d.dateAdded}</span>
+                      {d.discussion&&d.discussion.length>0&&<span style={{color:"#534AB7"}}>{"💬 "+d.discussion.length}</span>}
+                    </div>
+                    {d.decisionOwner&&<span style={{fontSize:11,color:"#888"}}>{d.decisionOwner}</span>}
+                  </div>
+                </div>
+              ))
+            }
+          </div>
         </Card2>
       </div>
 

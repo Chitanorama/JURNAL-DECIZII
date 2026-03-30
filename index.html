@@ -3,18 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Jurnal de Decizii | Annterior</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-      * { box-sizing: border-box; margin: 0; padding: 0; }
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      
+      html, body {
+        height: 100%;
+        width: 100%;
+        overflow-x: hidden;
+      }
+      
       body { 
         font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
         -webkit-font-smoothing: antialiased;
         background: #faf7f4;
       }
+
+      #root {
+        min-height: 100vh;
+        min-height: calc(var(--vh, 1vh) * 100);
+      }
+
       input, select, textarea, button {
         font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
         font-size: 14px;
@@ -39,11 +52,29 @@
         color: #3d3530;
         transition: background 0.15s, border-color 0.15s;
       }
-      button:hover {
-        background: #f5f0ea;
-        border-color: #d4c9bc;
+      button:hover { background: #f5f0ea; border-color: #d4c9bc; }
+      
+      /* RESPONSIVE MOBILE */
+      @media (max-width: 768px) {
+        /* Tabele pe mobile - scroll orizontal */
+        table { font-size: 12px; }
+        
+        /* Stats cards - 2 pe rand */
+        .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        
+        /* Drawer full width pe mobile */
+        .drawer-panel { width: 100vw !important; }
+        
+        /* Header wrap pe mobile */
+        .header-nav { flex-wrap: wrap; gap: 6px; }
+        
+        /* Padding mai mic pe mobile */
+        .main-padding { padding: 12px !important; }
+
+        input, select, textarea { font-size: 16px !important; } /* previne zoom pe iOS */
       }
-      ::-webkit-scrollbar { width: 5px; }
+
+      ::-webkit-scrollbar { width: 4px; }
       ::-webkit-scrollbar-track { background: #faf7f4; }
       ::-webkit-scrollbar-thumb { background: #d4c9bc; border-radius: 10px; }
     </style>
